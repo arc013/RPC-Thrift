@@ -10,6 +10,9 @@ namespace java blockServer
 
 /*typedef shared.serverInfo serverInfo*/
 typedef shared.response response
+typedef shared.uploadResponse uploadResponse
+typedef shared.file file
+
 
 struct hashBlock {
 	1: string hash,
