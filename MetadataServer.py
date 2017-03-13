@@ -15,54 +15,58 @@ from thrift.protocol import TBinaryProtocol
 from metadataServer import MetadataServerService
 from shared.ttypes import *
 
+
+def getBlockServerPort(config_path):
+
+    # This function reads config file and gets the port for block server
+    print "Checking validity of the config path"
+    if not os.path.exists(config_path):
+        print "ERROR: Config path is invalid"
+        exit(1)
+    if not os.path.isfile(config_path):
+        print "ERROR: Config path is not a file"
+        exit(1)
+
+    print "Reading config file"
+    with open(config_path, 'r') as conffile:
+        lines = conffile.readlines()
+        for line in lines:
+            if 'block' in line:
+                #Important to make port as an integer
+                return int(line.split()[1].lstrip().rstrip())
+
+    # Exit if you did not get blockserver information
+    print "ERROR: blockserver information not found in config file"
+    exit(1)
+
+
+def getBlockServerSocket(port):
+    # This function creates a socket to block server and returns it
+
+    # Make socket
+    transport = TSocket.TSocket('localhost', port)
+    # Buffering is critical. Raw sockets are very slow
+    transport = TTransport.TBufferedTransport(transport)
+    # Wrap in a protocol
+    protocol = TBinaryProtocol.TBinaryProtocol(transport)
+    # Create a client to use the protocol encoder
+    client = BlockServerService.Client(protocol)
+
+    # Connect!
+    print "Connecting to block server on port", port
+    try:
+        transport.open()
+    except Exception as e:
+        print "ERROR: Exception while connecting to block server, check if server is running on port", port
+        print e
+        exit(1)
+
+    return client
+
+
+
 class MetadataServerHandler():
 
-
-    def getBlockServerPort(config_path):
-    # This function reads config file and gets the port for block server
-      print "Checking validity of the config path"
-      if not os.path.exists(config_path):
-          print "ERROR: Config path is invalid"
-          exit(1)
-      if not os.path.isfile(config_path):
-          print "ERROR: Config path is not a file"
-          exit(1)
-
-      print "Reading config file"
-      with open(config_path, 'r') as conffile:
-          lines = conffile.readlines()
-          for line in lines:
-              if 'block' in line:
-                  #Important to make port as an integer
-                  return int(line.split()[1].lstrip().rstrip())
-
-      # Exit if you did not get blockserver information
-      print "ERROR: blockserver information not found in config file"
-      exit(1)
-
-
-    def getBlockServerSocket(port):
-      # This function creates a socket to block server and returns it
-
-      # Make socket
-      transport = TSocket.TSocket('localhost', port)
-      # Buffering is critical. Raw sockets are very slow
-      transport = TTransport.TBufferedTransport(transport)
-      # Wrap in a protocol
-      protocol = TBinaryProtocol.TBinaryProtocol(transport)
-      # Create a client to use the protocol encoder
-      client = BlockServerService.Client(protocol)
-
-      # Connect!
-      print "Connecting to block server on port", port
-      try:
-          transport.open()
-      except Exception as e:
-          print "ERROR: Exception while connecting to block server, check if server is running on port", port
-          print e
-          exit(1)
-
-      return client
 
 
 
