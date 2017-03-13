@@ -6,7 +6,7 @@
 if [ "$#" -ne 2 ]
 then
 	echo "Wrong arguments, usage :"
-	echo "./runMetaServer.sh <config_file> <id>"
+	echo "./runMetadataServer.sh <config_file> <id>"
 	exit
 fi
 
@@ -19,7 +19,7 @@ ID=$2
 # Eg. If you are using python and your metaServer is MetaServer.py
 # Call
 #
-python MetaServer.py $CONFIGFILE_PATH $ID
+python MetadataServer.py $CONFIGFILE_PATH $ID
 #
 # or if CPP
 #
