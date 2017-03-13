@@ -18,27 +18,6 @@ from shared.ttypes import *
 class MetadataServerHandler():
 
 
-
-    def __init__(self, config_path, my_id):
-        # Initialize block
-        self.config_path = config_path
-        self.id         = my_id
-        port            = getBlockServerPort(config_path)
-        self.block_sock = getBlockServerSocket(port)
-        self.files = {}
-        
-
-    def getFile(self, filename):
-        # Function to handle download request from file
-        if filename in self.files:
-            return self.files[filename]
-        f = file()
-        f.filename = filename
-        f.status   = responseType.ERROR
-        return f
-        
-
-
     def getBlockServerPort(config_path):
     # This function reads config file and gets the port for block server
       print "Checking validity of the config path"
@@ -85,6 +64,29 @@ class MetadataServerHandler():
 
       return client
 
+
+
+    def __init__(self, config_path, my_id):
+        # Initialize block
+        self.config_path = config_path
+        self.id         = my_id
+        port            = getBlockServerPort(config_path)
+        self.block_sock = getBlockServerSocket(port)
+        self.files = {}
+        
+
+    def getFile(self, filename):
+        # Function to handle download request from file
+        if filename in self.files:
+            return self.files[filename]
+        f = file()
+        f.filename = filename
+        f.status   = responseType.ERROR
+        return f
+        
+
+
+  
 
     def storeFile(self, file):
         # Function to handle upload request
