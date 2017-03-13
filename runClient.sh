@@ -19,7 +19,7 @@ FILENAME_OR_UPLOADDIR=$4
 # Eg. If you are using python and your client is Client.py
 # Call
 #
-# python Client.py $CONFIGFILE_PATH $DOWNLOAD_DIR $COMMAND $FILENAME_OR_UPLOADDIR
+python Client.py $CONFIGFILE_PATH $DOWNLOAD_DIR $COMMAND $FILENAME_OR_UPLOADDIR
 #
 # or if CPP
 #

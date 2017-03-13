@@ -19,7 +19,7 @@ ID=$2
 # Eg. If you are using python and your metaServer is MetaServer.py
 # Call
 #
-# python MetaServer.py $CONFIGFILE_PATH $ID
+python MetaServer.py $CONFIGFILE_PATH $ID
 #
 # or if CPP
 #

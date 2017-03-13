@@ -18,28 +18,21 @@ except:
 
 
 class Iface:
-  def storeBlock(self, hashblock):
+  def getFile(self, filename):
     """
     Parameters:
-     - hashblock
+     - filename
     """
     pass
 
-  def getBlock(self, hash):
+  def storeFile(self, f):
     """
     Parameters:
-     - hash
+     - f
     """
     pass
 
-  def deleteBlock(self, hash):
-    """
-    Parameters:
-     - hash
-    """
-    pass
-
-  def hasFile(self, f):
+  def deleteFile(self, f):
     """
     Parameters:
      - f
@@ -54,135 +47,104 @@ class Client(Iface):
       self._oprot = oprot
     self._seqid = 0
 
-  def storeBlock(self, hashblock):
+  def getFile(self, filename):
     """
     Parameters:
-     - hashblock
+     - filename
     """
-    self.send_storeBlock(hashblock)
-    return self.recv_storeBlock()
+    self.send_getFile(filename)
+    return self.recv_getFile()
 
-  def send_storeBlock(self, hashblock):
-    self._oprot.writeMessageBegin('storeBlock', TMessageType.CALL, self._seqid)
-    args = storeBlock_args()
-    args.hashblock = hashblock
+  def send_getFile(self, filename):
+    self._oprot.writeMessageBegin('getFile', TMessageType.CALL, self._seqid)
+    args = getFile_args()
+    args.filename = filename
     args.write(self._oprot)
     self._oprot.writeMessageEnd()
     self._oprot.trans.flush()
 
-  def recv_storeBlock(self):
+  def recv_getFile(self):
     (fname, mtype, rseqid) = self._iprot.readMessageBegin()
     if mtype == TMessageType.EXCEPTION:
       x = TApplicationException()
       x.read(self._iprot)
       self._iprot.readMessageEnd()
       raise x
-    result = storeBlock_result()
+    result = getFile_result()
     result.read(self._iprot)
     self._iprot.readMessageEnd()
     if result.success is not None:
       return result.success
-    raise TApplicationException(TApplicationException.MISSING_RESULT, "storeBlock failed: unknown result");
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "getFile failed: unknown result");
 
-  def getBlock(self, hash):
-    """
-    Parameters:
-     - hash
-    """
-    self.send_getBlock(hash)
-    return self.recv_getBlock()
-
-  def send_getBlock(self, hash):
-    self._oprot.writeMessageBegin('getBlock', TMessageType.CALL, self._seqid)
-    args = getBlock_args()
-    args.hash = hash
-    args.write(self._oprot)
-    self._oprot.writeMessageEnd()
-    self._oprot.trans.flush()
-
-  def recv_getBlock(self):
-    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(self._iprot)
-      self._iprot.readMessageEnd()
-      raise x
-    result = getBlock_result()
-    result.read(self._iprot)
-    self._iprot.readMessageEnd()
-    if result.success is not None:
-      return result.success
-    raise TApplicationException(TApplicationException.MISSING_RESULT, "getBlock failed: unknown result");
-
-  def deleteBlock(self, hash):
-    """
-    Parameters:
-     - hash
-    """
-    self.send_deleteBlock(hash)
-    return self.recv_deleteBlock()
-
-  def send_deleteBlock(self, hash):
-    self._oprot.writeMessageBegin('deleteBlock', TMessageType.CALL, self._seqid)
-    args = deleteBlock_args()
-    args.hash = hash
-    args.write(self._oprot)
-    self._oprot.writeMessageEnd()
-    self._oprot.trans.flush()
-
-  def recv_deleteBlock(self):
-    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(self._iprot)
-      self._iprot.readMessageEnd()
-      raise x
-    result = deleteBlock_result()
-    result.read(self._iprot)
-    self._iprot.readMessageEnd()
-    if result.success is not None:
-      return result.success
-    raise TApplicationException(TApplicationException.MISSING_RESULT, "deleteBlock failed: unknown result");
-
-  def hasFile(self, f):
+  def storeFile(self, f):
     """
     Parameters:
      - f
     """
-    self.send_hasFile(f)
-    return self.recv_hasFile()
+    self.send_storeFile(f)
+    return self.recv_storeFile()
 
-  def send_hasFile(self, f):
-    self._oprot.writeMessageBegin('hasFile', TMessageType.CALL, self._seqid)
-    args = hasFile_args()
+  def send_storeFile(self, f):
+    self._oprot.writeMessageBegin('storeFile', TMessageType.CALL, self._seqid)
+    args = storeFile_args()
     args.f = f
     args.write(self._oprot)
     self._oprot.writeMessageEnd()
     self._oprot.trans.flush()
 
-  def recv_hasFile(self):
+  def recv_storeFile(self):
     (fname, mtype, rseqid) = self._iprot.readMessageBegin()
     if mtype == TMessageType.EXCEPTION:
       x = TApplicationException()
       x.read(self._iprot)
       self._iprot.readMessageEnd()
       raise x
-    result = hasFile_result()
+    result = storeFile_result()
     result.read(self._iprot)
     self._iprot.readMessageEnd()
     if result.success is not None:
       return result.success
-    raise TApplicationException(TApplicationException.MISSING_RESULT, "hasFile failed: unknown result");
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "storeFile failed: unknown result");
+
+  def deleteFile(self, f):
+    """
+    Parameters:
+     - f
+    """
+    self.send_deleteFile(f)
+    return self.recv_deleteFile()
+
+  def send_deleteFile(self, f):
+    self._oprot.writeMessageBegin('deleteFile', TMessageType.CALL, self._seqid)
+    args = deleteFile_args()
+    args.f = f
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_deleteFile(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = deleteFile_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "deleteFile failed: unknown result");
 
 
 class Processor(Iface, TProcessor):
   def __init__(self, handler):
     self._handler = handler
     self._processMap = {}
-    self._processMap["storeBlock"] = Processor.process_storeBlock
-    self._processMap["getBlock"] = Processor.process_getBlock
-    self._processMap["deleteBlock"] = Processor.process_deleteBlock
-    self._processMap["hasFile"] = Processor.process_hasFile
+    self._processMap["getFile"] = Processor.process_getFile
+    self._processMap["storeFile"] = Processor.process_storeFile
+    self._processMap["deleteFile"] = Processor.process_deleteFile
 
   def process(self, iprot, oprot):
     (name, type, seqid) = iprot.readMessageBegin()
@@ -199,46 +161,35 @@ class Processor(Iface, TProcessor):
       self._processMap[name](self, seqid, iprot, oprot)
     return True
 
-  def process_storeBlock(self, seqid, iprot, oprot):
-    args = storeBlock_args()
+  def process_getFile(self, seqid, iprot, oprot):
+    args = getFile_args()
     args.read(iprot)
     iprot.readMessageEnd()
-    result = storeBlock_result()
-    result.success = self._handler.storeBlock(args.hashblock)
-    oprot.writeMessageBegin("storeBlock", TMessageType.REPLY, seqid)
+    result = getFile_result()
+    result.success = self._handler.getFile(args.filename)
+    oprot.writeMessageBegin("getFile", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
     oprot.trans.flush()
 
-  def process_getBlock(self, seqid, iprot, oprot):
-    args = getBlock_args()
+  def process_storeFile(self, seqid, iprot, oprot):
+    args = storeFile_args()
     args.read(iprot)
     iprot.readMessageEnd()
-    result = getBlock_result()
-    result.success = self._handler.getBlock(args.hash)
-    oprot.writeMessageBegin("getBlock", TMessageType.REPLY, seqid)
+    result = storeFile_result()
+    result.success = self._handler.storeFile(args.f)
+    oprot.writeMessageBegin("storeFile", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
     oprot.trans.flush()
 
-  def process_deleteBlock(self, seqid, iprot, oprot):
-    args = deleteBlock_args()
+  def process_deleteFile(self, seqid, iprot, oprot):
+    args = deleteFile_args()
     args.read(iprot)
     iprot.readMessageEnd()
-    result = deleteBlock_result()
-    result.success = self._handler.deleteBlock(args.hash)
-    oprot.writeMessageBegin("deleteBlock", TMessageType.REPLY, seqid)
-    result.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def process_hasFile(self, seqid, iprot, oprot):
-    args = hasFile_args()
-    args.read(iprot)
-    iprot.readMessageEnd()
-    result = hasFile_result()
-    result.success = self._handler.hasFile(args.f)
-    oprot.writeMessageBegin("hasFile", TMessageType.REPLY, seqid)
+    result = deleteFile_result()
+    result.success = self._handler.deleteFile(args.f)
+    oprot.writeMessageBegin("deleteFile", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
     oprot.trans.flush()
@@ -246,140 +197,19 @@ class Processor(Iface, TProcessor):
 
 # HELPER FUNCTIONS AND STRUCTURES
 
-class storeBlock_args:
+class getFile_args:
   """
   Attributes:
-   - hashblock
+   - filename
   """
 
   thrift_spec = (
     None, # 0
-    (1, TType.STRUCT, 'hashblock', (hashBlock, hashBlock.thrift_spec), None, ), # 1
+    (1, TType.STRING, 'filename', None, None, ), # 1
   )
 
-  def __init__(self, hashblock=None,):
-    self.hashblock = hashblock
-
-  def read(self, iprot):
-    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
-      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
-      return
-    iprot.readStructBegin()
-    while True:
-      (fname, ftype, fid) = iprot.readFieldBegin()
-      if ftype == TType.STOP:
-        break
-      if fid == 1:
-        if ftype == TType.STRUCT:
-          self.hashblock = hashBlock()
-          self.hashblock.read(iprot)
-        else:
-          iprot.skip(ftype)
-      else:
-        iprot.skip(ftype)
-      iprot.readFieldEnd()
-    iprot.readStructEnd()
-
-  def write(self, oprot):
-    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
-      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
-      return
-    oprot.writeStructBegin('storeBlock_args')
-    if self.hashblock is not None:
-      oprot.writeFieldBegin('hashblock', TType.STRUCT, 1)
-      self.hashblock.write(oprot)
-      oprot.writeFieldEnd()
-    oprot.writeFieldStop()
-    oprot.writeStructEnd()
-
-  def validate(self):
-    return
-
-
-  def __repr__(self):
-    L = ['%s=%r' % (key, value)
-      for key, value in self.__dict__.iteritems()]
-    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-  def __eq__(self, other):
-    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-  def __ne__(self, other):
-    return not (self == other)
-
-class storeBlock_result:
-  """
-  Attributes:
-   - success
-  """
-
-  thrift_spec = (
-    (0, TType.STRUCT, 'success', (shared.ttypes.response, shared.ttypes.response.thrift_spec), None, ), # 0
-  )
-
-  def __init__(self, success=None,):
-    self.success = success
-
-  def read(self, iprot):
-    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
-      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
-      return
-    iprot.readStructBegin()
-    while True:
-      (fname, ftype, fid) = iprot.readFieldBegin()
-      if ftype == TType.STOP:
-        break
-      if fid == 0:
-        if ftype == TType.STRUCT:
-          self.success = shared.ttypes.response()
-          self.success.read(iprot)
-        else:
-          iprot.skip(ftype)
-      else:
-        iprot.skip(ftype)
-      iprot.readFieldEnd()
-    iprot.readStructEnd()
-
-  def write(self, oprot):
-    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
-      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
-      return
-    oprot.writeStructBegin('storeBlock_result')
-    if self.success is not None:
-      oprot.writeFieldBegin('success', TType.STRUCT, 0)
-      self.success.write(oprot)
-      oprot.writeFieldEnd()
-    oprot.writeFieldStop()
-    oprot.writeStructEnd()
-
-  def validate(self):
-    return
-
-
-  def __repr__(self):
-    L = ['%s=%r' % (key, value)
-      for key, value in self.__dict__.iteritems()]
-    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-  def __eq__(self, other):
-    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-  def __ne__(self, other):
-    return not (self == other)
-
-class getBlock_args:
-  """
-  Attributes:
-   - hash
-  """
-
-  thrift_spec = (
-    None, # 0
-    (1, TType.STRING, 'hash', None, None, ), # 1
-  )
-
-  def __init__(self, hash=None,):
-    self.hash = hash
+  def __init__(self, filename=None,):
+    self.filename = filename
 
   def read(self, iprot):
     if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
@@ -392,7 +222,7 @@ class getBlock_args:
         break
       if fid == 1:
         if ftype == TType.STRING:
-          self.hash = iprot.readString();
+          self.filename = iprot.readString();
         else:
           iprot.skip(ftype)
       else:
@@ -404,10 +234,10 @@ class getBlock_args:
     if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
       oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
       return
-    oprot.writeStructBegin('getBlock_args')
-    if self.hash is not None:
-      oprot.writeFieldBegin('hash', TType.STRING, 1)
-      oprot.writeString(self.hash)
+    oprot.writeStructBegin('getFile_args')
+    if self.filename is not None:
+      oprot.writeFieldBegin('filename', TType.STRING, 1)
+      oprot.writeString(self.filename)
       oprot.writeFieldEnd()
     oprot.writeFieldStop()
     oprot.writeStructEnd()
@@ -427,14 +257,14 @@ class getBlock_args:
   def __ne__(self, other):
     return not (self == other)
 
-class getBlock_result:
+class getFile_result:
   """
   Attributes:
    - success
   """
 
   thrift_spec = (
-    (0, TType.STRUCT, 'success', (hashBlock, hashBlock.thrift_spec), None, ), # 0
+    (0, TType.STRUCT, 'success', (shared.ttypes.file, shared.ttypes.file.thrift_spec), None, ), # 0
   )
 
   def __init__(self, success=None,):
@@ -451,7 +281,7 @@ class getBlock_result:
         break
       if fid == 0:
         if ftype == TType.STRUCT:
-          self.success = hashBlock()
+          self.success = shared.ttypes.file()
           self.success.read(iprot)
         else:
           iprot.skip(ftype)
@@ -464,7 +294,7 @@ class getBlock_result:
     if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
       oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
       return
-    oprot.writeStructBegin('getBlock_result')
+    oprot.writeStructBegin('getFile_result')
     if self.success is not None:
       oprot.writeFieldBegin('success', TType.STRUCT, 0)
       self.success.write(oprot)
@@ -487,127 +317,7 @@ class getBlock_result:
   def __ne__(self, other):
     return not (self == other)
 
-class deleteBlock_args:
-  """
-  Attributes:
-   - hash
-  """
-
-  thrift_spec = (
-    None, # 0
-    (1, TType.STRING, 'hash', None, None, ), # 1
-  )
-
-  def __init__(self, hash=None,):
-    self.hash = hash
-
-  def read(self, iprot):
-    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
-      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
-      return
-    iprot.readStructBegin()
-    while True:
-      (fname, ftype, fid) = iprot.readFieldBegin()
-      if ftype == TType.STOP:
-        break
-      if fid == 1:
-        if ftype == TType.STRING:
-          self.hash = iprot.readString();
-        else:
-          iprot.skip(ftype)
-      else:
-        iprot.skip(ftype)
-      iprot.readFieldEnd()
-    iprot.readStructEnd()
-
-  def write(self, oprot):
-    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
-      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
-      return
-    oprot.writeStructBegin('deleteBlock_args')
-    if self.hash is not None:
-      oprot.writeFieldBegin('hash', TType.STRING, 1)
-      oprot.writeString(self.hash)
-      oprot.writeFieldEnd()
-    oprot.writeFieldStop()
-    oprot.writeStructEnd()
-
-  def validate(self):
-    return
-
-
-  def __repr__(self):
-    L = ['%s=%r' % (key, value)
-      for key, value in self.__dict__.iteritems()]
-    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-  def __eq__(self, other):
-    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-  def __ne__(self, other):
-    return not (self == other)
-
-class deleteBlock_result:
-  """
-  Attributes:
-   - success
-  """
-
-  thrift_spec = (
-    (0, TType.STRUCT, 'success', (shared.ttypes.response, shared.ttypes.response.thrift_spec), None, ), # 0
-  )
-
-  def __init__(self, success=None,):
-    self.success = success
-
-  def read(self, iprot):
-    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
-      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
-      return
-    iprot.readStructBegin()
-    while True:
-      (fname, ftype, fid) = iprot.readFieldBegin()
-      if ftype == TType.STOP:
-        break
-      if fid == 0:
-        if ftype == TType.STRUCT:
-          self.success = shared.ttypes.response()
-          self.success.read(iprot)
-        else:
-          iprot.skip(ftype)
-      else:
-        iprot.skip(ftype)
-      iprot.readFieldEnd()
-    iprot.readStructEnd()
-
-  def write(self, oprot):
-    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
-      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
-      return
-    oprot.writeStructBegin('deleteBlock_result')
-    if self.success is not None:
-      oprot.writeFieldBegin('success', TType.STRUCT, 0)
-      self.success.write(oprot)
-      oprot.writeFieldEnd()
-    oprot.writeFieldStop()
-    oprot.writeStructEnd()
-
-  def validate(self):
-    return
-
-
-  def __repr__(self):
-    L = ['%s=%r' % (key, value)
-      for key, value in self.__dict__.iteritems()]
-    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-  def __eq__(self, other):
-    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-  def __ne__(self, other):
-    return not (self == other)
-
-class hasFile_args:
+class storeFile_args:
   """
   Attributes:
    - f
@@ -645,7 +355,7 @@ class hasFile_args:
     if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
       oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
       return
-    oprot.writeStructBegin('hasFile_args')
+    oprot.writeStructBegin('storeFile_args')
     if self.f is not None:
       oprot.writeFieldBegin('f', TType.STRUCT, 1)
       self.f.write(oprot)
@@ -668,7 +378,7 @@ class hasFile_args:
   def __ne__(self, other):
     return not (self == other)
 
-class hasFile_result:
+class storeFile_result:
   """
   Attributes:
    - success
@@ -705,7 +415,128 @@ class hasFile_result:
     if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
       oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
       return
-    oprot.writeStructBegin('hasFile_result')
+    oprot.writeStructBegin('storeFile_result')
+    if self.success is not None:
+      oprot.writeFieldBegin('success', TType.STRUCT, 0)
+      self.success.write(oprot)
+      oprot.writeFieldEnd()
+    oprot.writeFieldStop()
+    oprot.writeStructEnd()
+
+  def validate(self):
+    return
+
+
+  def __repr__(self):
+    L = ['%s=%r' % (key, value)
+      for key, value in self.__dict__.iteritems()]
+    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+  def __eq__(self, other):
+    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+  def __ne__(self, other):
+    return not (self == other)
+
+class deleteFile_args:
+  """
+  Attributes:
+   - f
+  """
+
+  thrift_spec = (
+    None, # 0
+    (1, TType.STRUCT, 'f', (shared.ttypes.file, shared.ttypes.file.thrift_spec), None, ), # 1
+  )
+
+  def __init__(self, f=None,):
+    self.f = f
+
+  def read(self, iprot):
+    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
+      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
+      return
+    iprot.readStructBegin()
+    while True:
+      (fname, ftype, fid) = iprot.readFieldBegin()
+      if ftype == TType.STOP:
+        break
+      if fid == 1:
+        if ftype == TType.STRUCT:
+          self.f = shared.ttypes.file()
+          self.f.read(iprot)
+        else:
+          iprot.skip(ftype)
+      else:
+        iprot.skip(ftype)
+      iprot.readFieldEnd()
+    iprot.readStructEnd()
+
+  def write(self, oprot):
+    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
+      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
+      return
+    oprot.writeStructBegin('deleteFile_args')
+    if self.f is not None:
+      oprot.writeFieldBegin('f', TType.STRUCT, 1)
+      self.f.write(oprot)
+      oprot.writeFieldEnd()
+    oprot.writeFieldStop()
+    oprot.writeStructEnd()
+
+  def validate(self):
+    return
+
+
+  def __repr__(self):
+    L = ['%s=%r' % (key, value)
+      for key, value in self.__dict__.iteritems()]
+    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+  def __eq__(self, other):
+    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+  def __ne__(self, other):
+    return not (self == other)
+
+class deleteFile_result:
+  """
+  Attributes:
+   - success
+  """
+
+  thrift_spec = (
+    (0, TType.STRUCT, 'success', (shared.ttypes.response, shared.ttypes.response.thrift_spec), None, ), # 0
+  )
+
+  def __init__(self, success=None,):
+    self.success = success
+
+  def read(self, iprot):
+    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
+      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
+      return
+    iprot.readStructBegin()
+    while True:
+      (fname, ftype, fid) = iprot.readFieldBegin()
+      if ftype == TType.STOP:
+        break
+      if fid == 0:
+        if ftype == TType.STRUCT:
+          self.success = shared.ttypes.response()
+          self.success.read(iprot)
+        else:
+          iprot.skip(ftype)
+      else:
+        iprot.skip(ftype)
+      iprot.readFieldEnd()
+    iprot.readStructEnd()
+
+  def write(self, oprot):
+    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
+      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
+      return
+    oprot.writeStructBegin('deleteFile_result')
     if self.success is not None:
       oprot.writeFieldBegin('success', TType.STRUCT, 0)
       self.success.write(oprot)

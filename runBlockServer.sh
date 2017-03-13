@@ -17,7 +17,7 @@ CONFIGFILE_PATH=$1
 # Eg. If you are using python and your blockServer is BlockServer.py
 # Call
 #
-# python BlockServer.py $CONFIGFILE_PATH
+python BlockServer.py $CONFIGFILE_PATH
 #
 # or if CPP
 #
