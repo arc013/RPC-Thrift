@@ -9,7 +9,7 @@ namespace java metadataServer
 typedef shared.response response
 /*typedef shared.clusterInfo clusterInfo*/
 typedef shared.file file
-typedef shared.files files
+/*typedef shared.files files*/
 typedef shared.serverInfo serverInfo
 typedef shared.uploadResponse uploadResponse
 
