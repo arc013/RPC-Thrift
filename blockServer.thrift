@@ -27,5 +27,6 @@ service BlockServerService {
 	response deleteBlock(1: string hash)
 
 	// Add any procedure you need below
+  uploadResponseType hasFile(1: file f)
 
 }

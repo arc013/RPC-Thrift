@@ -116,87 +116,125 @@ def getMetaServerSocket(port):
 
 def scan_base_dir(base_dir):
     local_block_list = {}
-    for file in files os.listdir(base_dir):
+    local_file_list  = {}
+    for file in os.listdir(base_dir):
         f    = open (file, "rb")
         data = fread(4096)
+        local_file_list[file]=[]
         while data is not None:
             #hash
             m = hashlib.sha256()
             m.update(data)
             hashString = m.hexdigest()
+            local_file_list [file].append(hashString)
             local_block_list[hashString] = data
             data = fread(4096)
-    return local_block_list
+    return local_block_list, local_file_list
 
-def do_operations(sock, meta_sock, local_block_list, command, filename):
-    # create a local dict to know which blocks are locally present
-    if command == "download":
-        write_file = open(filename, "rb")
+def upload_file(sock, meta_sock, local_block_list, local_file_list, filename):
+    upload_file = file()
+    upload_file.filename = filename
+    statbuf = os.stat(filename)
+    print("check statbuf")
+    upload_file.version  = statbuf.st_mtime
+    upload_file.status   = responseType.OK
+    upload_file.hashList = local_file_list[filename]
+    upload_resp          = meta_sock.storeFile(upload_file)
+    if upload_resp.status == uploadResponseType.OK:
+        print("Upload done")
+
+    elif upload_resp.status == uploadResponseType.MISSING_BLOCKS:
+        for hb in upload_resp.hashList:
+            try:
+                resp = sock.storeBlock(hb)
+            except Exception as e:
+                print "Received exception while trying storeBlock"
+                print e
+                exit(1)
+            print "Received response from block server"
+            if resp.message == responseType.OK:
+                print "Server said OK, block upload successful"
+            else:
+                print "Server said ERROR, block upload unsuccessful"
+
+    elif upload_resp.status == uploadResponseType.FILE_ALREADY_PRESENT:
+        print("should just overwrite")
+
+    else:
+        #error
+        print("error in uploading to metadata server")
+
+
+def download_file(sock, meta_sock, local_block_list, local_file_list, filename):
+    write_file = open(filename, "rb")
         # data = fread(4096)
-        f          = meta_sock.getFile(filename)
-        if f.status == responseType.OK:
-            print "Meta Server said OK, block list retrieve successful"
-            for hashString in f.hashList:
-                #m = hashlib.sha256()
-                #m.update(data)
-                #hashString = m.hexdigest()
-                if hashString is not in local_block_list:
-                    #getblock from socket
-                    try:
-                        hb = sock.getBlock(hashstring)]
-                    except Exception as e:
-                        print "Received exception while trying getBlock"
-                        print e
-                        exit(1)
-                    if hb.status == "ERROR":
-                        print "ERROR status while retrieving block, looks like block server does`nt have it"
-                        return
-                    else:
-                        print "Block status OK"
-                    m = hashlib.sha256()
-                    m.update(hb.block)
-                    hashString_dwnld = m.hexdigest()
-                    if hashString == hashString_dwnld:
-                        print "Blocks match"
-                    else:
-                        print "Blocks does not match"
-                    write_file.write(hb.block)
-
+    f          = meta_sock.getFile(filename)
+    if f.status == responseType.OK:
+        print "Meta Server said OK, block list retrieve successful"
+        for hashString in f.hashList:
+            if hashString is not in local_block_list:
+                #getblock from socket
+                try:
+                    hb = sock.getBlock(hashstring)]
+                except Exception as e:
+                    print "Received exception while trying getBlock"
+                    print e
+                    exit(1)
+                if hb.status == "ERROR":
+                    print "ERROR status while retrieving block, looks like block server does`nt have it"
+                    return
                 else:
-                    write_file.write(local_block_list[hashstring])
+                    print "Block status OK"
+                m = hashlib.sha256()
+                m.update(hb.block)
+                hashString_dwnld = m.hexdigest()
+                if hashString == hashString_dwnld:
+                    print "Blocks match"
+                else:
+                    print "Blocks does not match"
+                write_file.write(hb.block)
+
+            else:
+                write_file.write(local_block_list[hashstring])
            # data = fread(4096)
 
-        else:
-            print "Server said ERROR,  Meta server get list unsuccessful"
+    else:
+        print "Server said ERROR,  Meta server get list unsuccessful"
 
+def delete_file(sock, meta_sock, local_block_list, local_file_list, filename):
+    f = meta_sock.getFile(filename)
+    if f.status == responseType.OK:
+        try:
+            resp = deleteFile(f)
+        except Exception as e:
+            print "ERROR while calling deleteFile"
+            print e
+        if resp.message == responseType.OK:
+            print "Deletion of block successful"
+        else:
+            print "Deletion of block not successful"
+        print "Done"
+    else:
+        print "Server said ERROR,  Meta server get list unsuccessful"
+
+'''def do_operations(sock, meta_sock, local_block_list, local_file_list, command, filename):
+    # create a local dict to know which blocks are locally present
+    if command == "download":
+        
     elif command == "upload":
+        
 
 
 
 
 
     elif command == "delete":
-        f = meta_sock.getFile(filename)
-        if f.status == responseType.OK:
-            try:
-                resp = deleteFile(f)
-            except Exception as e:
-                print "ERROR while calling deleteFile"
-                print e
-            if resp.message == responseType.OK:
-                print "Deletion of block successful"
-            else:
-                print "Deletion of block not successful"
-
-            print "Done"
-        else:
-            print "Server said ERROR,  Meta server get list unsuccessful"
+        
 
 
 
-    else:
-        print "ERROR: not supported command"
-    
+    else:'''
+            
 
 
 if __name__ == "__main__":
@@ -220,9 +258,23 @@ if __name__ == "__main__":
 
 
 
-    local_block_list = scan_base_dir(base_dir)
+    local_block_list, local_file_list = scan_base_dir(base_dir)
     # Time to do some operations!
-    do_operations(sock, meta_sock, local_block_list, command, filename)
+    if command == "upload":
+        upload_file(sock, meta_sock, local_block_list, local_file_list, filename)
+
+    elif command == "download":
+        download_file(sock, meta_sock, local_block_list, local_file_list, filename)
+
+    elif command == "delete":
+        delete_file(sock, meta_sock, local_block_list, local_file_list, filename)
+
+
+    else:
+        print "ERROR: not supported command"
+
+
+    #do_operations(sock, meta_sock, local_block_list, local_file_list, command, filename)
 
 
 
