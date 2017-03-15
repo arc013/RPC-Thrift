@@ -28,7 +28,7 @@ class BlockServerHandler():
     def storeBlock(self, hashBlock):
         # Store hash block, called by client during upload
         print("storing block in block server")
-        self.hashBlocks[hashBlock.hash] = hashBlock
+        self.hashBlocks[hashBlock.hash] = hashBlock.block
         r = response()
         r.message = responseType.OK
         return r
@@ -86,13 +86,20 @@ class BlockServerHandler():
     
     def hasFile(self, f):
         print ("in hasFile")
-        ur        = uploadResponse()
-        ur.status = uploadResponseType.FILE_ALREADY_PRESENT
-        for hash in f.hashList:
-            if hash not in self.hashBlock:
+        ur          = uploadResponse()
+        ur.status   = uploadResponseType.FILE_ALREADY_PRESENT
+        ur.hashList = []
+        print(f.hashList)
+        print("hello")
+        print(self.hashBlocks)
+        print("what")
+        for h in f.hashList:
+            if h not in self.hashBlocks:
                 print ("not all here")
                 ur.status = uploadResponseType.MISSING_BLOCKS
-                ur.hashList.append(hash)
+                print ("spice")
+                ur.hashList.append(h)
+                print("where")
         return ur
 
 
@@ -122,7 +129,7 @@ if __name__ == "__main__":
     tfactory = TTransport.TBufferedTransportFactory()
     pfactory = TBinaryProtocol.TBinaryProtocolFactory()
     # Create a server object
-    server = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
+    server = TServer.TThreadedServer(processor, transport, tfactory, pfactory)
     print "Starting server on port : ", port
 
     try:

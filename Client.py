@@ -120,36 +120,53 @@ def getMetaServerSocket(port):
 def scan_base_dir(base_dir):
     local_block_list = {}
     local_file_list  = {}
+    m = hashlib.sha256()
+    print("base directory is: "+base_dir)
     for file in os.listdir(base_dir):
-        f    = open (file, "rb")
+        #print("how many times")
+        #print(base_dir+file)
+        fs   = os.path.join(base_dir, file)
+        f    = open (fs, "rb")
         data = f.read(4096*1024)
         local_file_list[file]=[]
-        while data is not None:
+        while data:
             #hash
-            m = hashlib.sha256()
+            #print("here")
             m.update(data)
             hashString = m.hexdigest()
+            #print(hashString)
+            #print(data)
+            #print("tuna")
             local_file_list [file].append(hashString)
             local_block_list[hashString] = data
             data = f.read(4096*1024)
-    return local_block_list, local_file_list
+    return (local_block_list, local_file_list)
 
-def upload_file(sock, meta_sock, local_block_list, local_file_list, filename):
+def upload_file(sock, meta_sock, local_block_list, local_file_list, filename,
+    base_dir):
     upload_file = file()
     upload_file.filename = filename
-    statbuf = os.stat(filename)
+    statbuf = os.stat( os.path.join(base_dir,filename))
     print("check statbuf")
     upload_file.version  = statbuf.st_mtime
     upload_file.status   = responseType.OK
     upload_file.hashList = local_file_list[filename]
+    print(upload_file.hashList)
     upload_resp          = meta_sock.storeFile(upload_file)
     if upload_resp.status == uploadResponseType.OK:
         print("Upload done")
 
     elif upload_resp.status == uploadResponseType.MISSING_BLOCKS:
         for hb in upload_resp.hashList:
+            h1        = hashBlock()
+            h1.hash   = hb
+            h1.block  = local_block_list[hb]
+            h1.status = "what"
+            print (h1)
+            print ("hi")
             try:
-                resp = sock.storeBlock(hb)
+                resp = sock.storeBlock(h1)
+                print("store once")
             except Exception as e:
                 print "Received exception while trying storeBlock"
                 print e
@@ -159,6 +176,8 @@ def upload_file(sock, meta_sock, local_block_list, local_file_list, filename):
                 print "Server said OK, block upload successful"
             else:
                 print "Server said ERROR, block upload unsuccessful"
+        meta_sock.storeFile(upload_file)
+
 
     elif upload_resp.status == uploadResponseType.FILE_ALREADY_PRESENT:
         print("should just overwrite")
@@ -169,7 +188,7 @@ def upload_file(sock, meta_sock, local_block_list, local_file_list, filename):
 
 
 def download_file(sock, meta_sock, local_block_list, local_file_list, filename):
-    write_file = open(filename, "rb")
+    write_file = open(filename, "wrb")
         # data = fread(4096)
     f          = meta_sock.getFile(filename)
     if f.status == responseType.OK:
@@ -198,27 +217,27 @@ def download_file(sock, meta_sock, local_block_list, local_file_list, filename):
                 write_file.write(hb.block)
 
             else:
-                write_file.write(local_block_list[hashstring])
+                write_file.write(local_block_list[hashString])
            # data = fread(4096)
 
     else:
         print "Server said ERROR,  Meta server get list unsuccessful"
 
 def delete_file(sock, meta_sock, local_block_list, local_file_list, filename):
-    f = meta_sock.getFile(filename)
-    if f.status == responseType.OK:
-        try:
-            resp = deleteFile(f)
-        except Exception as e:
-            print "ERROR while calling deleteFile"
-            print e
-        if resp.message == responseType.OK:
-            print "Deletion of block successful"
-        else:
-            print "Deletion of block not successful"
-        print "Done"
+    s = file()
+    s.filename=filename
+    try:
+      resp = meta_sock.deleteFile(s)
+    except Exception as e:
+      print "ERROR while calling deleteFile"
+      print e
+    if resp.message == responseType.OK:
+      print "Deletion of block successful"
     else:
-        print "Server said ERROR,  Meta server get list unsuccessful"
+      print "Deletion of block not successful"
+    print "done"   
+   # else:
+       # print "Server said ERROR,  Meta server get list unsuccessful"
 
 '''def do_operations(sock, meta_sock, local_block_list, local_file_list, command, filename):
     # create a local dict to know which blocks are locally present
@@ -259,12 +278,14 @@ if __name__ == "__main__":
     meta_port = getMetadataServerPort(config_path)
     meta_sock = getMetaServerSocket(meta_port)
 
-
-
-    local_block_list, local_file_list = scan_base_dir(base_dir)
+    (local_block_list, local_file_list) = scan_base_dir(base_dir)
+    
+    
+    print("does it come here")
     # Time to do some operations!
     if command == "upload":
-        upload_file(sock, meta_sock, local_block_list, local_file_list, filename)
+        upload_file(sock, meta_sock, local_block_list, local_file_list,
+            filename, base_dir)
 
     elif command == "download":
         download_file(sock, meta_sock, local_block_list, local_file_list, filename)

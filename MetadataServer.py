@@ -118,13 +118,15 @@ class MetadataServerHandler():
             
 
 
-    def deleteFile(self, filename):
+    def deleteFile(self, f):
         # Function to handle download request from file
         print("in deletefile")
         resp = response()
-        if filename in self.files:
+        print("hi")
+        if f.filename in self.files:
+            print ("here")
             resp.message = responseType.OK
-            del self.files[filename]
+            del self.files[f.filename]
         else:
             print("delete file but file doesn't exist")
             resp.message = responseType.ERROR
