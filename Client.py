@@ -3,6 +3,7 @@
 import sys
 import glob
 import os
+import hashlib
 
 sys.path.append('gen-py')
 
@@ -15,6 +16,8 @@ from thrift.protocol import TBinaryProtocol
 from shared.ttypes import *
 from metadataServer.ttypes import *
 from blockServer.ttypes import *
+from blockServer import BlockServerService
+from metadataServer import MetadataServerService
 
 # Add classes / functions as required here
 def getBlockServerPort(config_path):
@@ -119,7 +122,7 @@ def scan_base_dir(base_dir):
     local_file_list  = {}
     for file in os.listdir(base_dir):
         f    = open (file, "rb")
-        data = fread(4096)
+        data = f.read(4096*1024)
         local_file_list[file]=[]
         while data is not None:
             #hash
@@ -128,7 +131,7 @@ def scan_base_dir(base_dir):
             hashString = m.hexdigest()
             local_file_list [file].append(hashString)
             local_block_list[hashString] = data
-            data = fread(4096)
+            data = f.read(4096*1024)
     return local_block_list, local_file_list
 
 def upload_file(sock, meta_sock, local_block_list, local_file_list, filename):
@@ -172,10 +175,10 @@ def download_file(sock, meta_sock, local_block_list, local_file_list, filename):
     if f.status == responseType.OK:
         print "Meta Server said OK, block list retrieve successful"
         for hashString in f.hashList:
-            if hashString is not in local_block_list:
+            if hashString not in local_block_list:
                 #getblock from socket
                 try:
-                    hb = sock.getBlock(hashstring)]
+                    hb = sock.getBlock(hashstring)
                 except Exception as e:
                     print "Received exception while trying getBlock"
                     print e

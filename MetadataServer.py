@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys
-
+import os
 sys.path.append('gen-py')
 
 # Thrift specific imports
@@ -14,6 +14,7 @@ from thrift.protocol import TBinaryProtocol
 # Protocol specific imports
 from metadataServer import MetadataServerService
 from shared.ttypes import *
+from blockServer import BlockServerService
 
 
 def getBlockServerPort(config_path):
@@ -81,11 +82,16 @@ class MetadataServerHandler():
 
     def getFile(self, filename):
         # Function to handle download request from file
+        print("getFile in Meta")
         if filename in self.files:
+            print("found file")
+            print(self.files[filename].filename)
+            print("pudding")
             return self.files[filename]
         f = file()
         f.filename = filename
         f.status   = responseType.ERROR
+        print("file not found in meta")
         return f
         
 
@@ -93,6 +99,7 @@ class MetadataServerHandler():
   
 
     def storeFile(self, file):
+        print("store file meta")
         # Function to handle upload request
         #
         try:
@@ -102,20 +109,24 @@ class MetadataServerHandler():
             print e
             exit(1)
         if ur.status == uploadResponseType.FILE_ALREADY_PRESENT:
+            print("already there")
             self.files[file.filename]=file
             return ur
         else:
+            print("send the missing ones")
             return ur
             
 
 
     def deleteFile(self, filename):
         # Function to handle download request from file
+        print("in deletefile")
         resp = response()
         if filename in self.files:
             resp.message = responseType.OK
             del self.files[filename]
         else:
+            print("delete file but file doesn't exist")
             resp.message = responseType.ERROR
 
         return resp

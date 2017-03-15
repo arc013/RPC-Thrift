@@ -27,6 +27,7 @@ class BlockServerHandler():
 
     def storeBlock(self, hashBlock):
         # Store hash block, called by client during upload
+        print("storing block in block server")
         self.hashBlocks[hashBlock.hash] = hashBlock
         r = response()
         r.message = responseType.OK
@@ -38,6 +39,7 @@ class BlockServerHandler():
         print "Searching in local data structure"
         if hash in self.hashBlocks:
             hb = self.hashBlocks[hash]
+            print("found block")
             return hb
         else:
             print "Hash block not found, returning a null block with ERROR as status"
@@ -83,10 +85,12 @@ class BlockServerHandler():
 
     
     def hasFile(self, f):
+        print ("in hasFile")
         ur        = uploadResponse()
         ur.status = uploadResponseType.FILE_ALREADY_PRESENT
         for hash in f.hashList:
             if hash not in self.hashBlock:
+                print ("not all here")
                 ur.status = uploadResponseType.MISSING_BLOCKS
                 ur.hashList.append(hash)
         return ur
