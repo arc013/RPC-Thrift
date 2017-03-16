@@ -120,7 +120,7 @@ def getMetaServerSocket(port):
 def scan_base_dir(base_dir):
     local_block_list = {}
     local_file_list  = {}
-    m = hashlib.sha256()
+    #m = hashlib.sha256()
     print("base directory is: "+base_dir)
     for file in os.listdir(base_dir):
         #print("how many times")
@@ -132,6 +132,7 @@ def scan_base_dir(base_dir):
         while data:
             #hash
             #print("here")
+            m = hashlib.sha256()
             m.update(data)
             hashString = m.hexdigest()
             #print(hashString)
@@ -217,6 +218,8 @@ def download_file(sock, meta_sock, local_block_list, local_file_list, filename,
                     print "Blocks does not match"
                     print (hashString)
                     print (hashString_dwnld)
+                    print (hb.block)
+                    print (hb.hash)
                 write_file.write(hb.block)
 
             else:
