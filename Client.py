@@ -187,8 +187,9 @@ def upload_file(sock, meta_sock, local_block_list, local_file_list, filename,
         print("error in uploading to metadata server")
 
 
-def download_file(sock, meta_sock, local_block_list, local_file_list, filename):
-    write_file = open(filename, "wrb")
+def download_file(sock, meta_sock, local_block_list, local_file_list, filename,
+    base_dir):
+    write_file = open(os.path.join(base_dir, filename), "wrb")
         # data = fread(4096)
     f          = meta_sock.getFile(filename)
     if f.status == responseType.OK:
@@ -197,7 +198,7 @@ def download_file(sock, meta_sock, local_block_list, local_file_list, filename):
             if hashString not in local_block_list:
                 #getblock from socket
                 try:
-                    hb = sock.getBlock(hashstring)
+                    hb = sock.getBlock(hashString)
                 except Exception as e:
                     print "Received exception while trying getBlock"
                     print e
@@ -214,6 +215,8 @@ def download_file(sock, meta_sock, local_block_list, local_file_list, filename):
                     print "Blocks match"
                 else:
                     print "Blocks does not match"
+                    print (hashString)
+                    print (hashString_dwnld)
                 write_file.write(hb.block)
 
             else:
@@ -288,7 +291,8 @@ if __name__ == "__main__":
             filename, base_dir)
 
     elif command == "download":
-        download_file(sock, meta_sock, local_block_list, local_file_list, filename)
+        download_file(sock, meta_sock, local_block_list, local_file_list,
+            filename, base_dir)
 
     elif command == "delete":
         delete_file(sock, meta_sock, local_block_list, local_file_list, filename)

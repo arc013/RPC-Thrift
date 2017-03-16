@@ -40,7 +40,11 @@ class BlockServerHandler():
         if hash in self.hashBlocks:
             hb = self.hashBlocks[hash]
             print("found block")
-            return hb
+            return_hashBlock = hashBlock()
+            return_hashBlock.hash   = hash
+            return_hashBlock.block  = hb
+            return_hashBlock.status = "OK"
+            return return_hashBlock
         else:
             print "Hash block not found, returning a null block with ERROR as status"
             hb = hashBlock()
