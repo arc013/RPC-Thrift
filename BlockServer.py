@@ -93,9 +93,9 @@ class BlockServerHandler():
         ur          = uploadResponse()
         ur.status   = uploadResponseType.FILE_ALREADY_PRESENT
         ur.hashList = []
-        print(f.hashList)
+        #print(f.hashList)
         print("hello")
-        print(self.hashBlocks)
+        #print(self.hashBlocks)
         print("what")
         for h in f.hashList:
             if h not in self.hashBlocks:

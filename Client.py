@@ -152,10 +152,11 @@ def upload_file(sock, meta_sock, local_block_list, local_file_list, filename,
     upload_file.version  = statbuf.st_mtime
     upload_file.status   = responseType.OK
     upload_file.hashList = local_file_list[filename]
-    print(upload_file.hashList)
+    #print(upload_file.hashList)
     upload_resp          = meta_sock.storeFile(upload_file)
     if upload_resp.status == uploadResponseType.OK:
         print("Upload done")
+        print("OK")
 
     elif upload_resp.status == uploadResponseType.MISSING_BLOCKS:
         for hb in upload_resp.hashList:
@@ -163,7 +164,7 @@ def upload_file(sock, meta_sock, local_block_list, local_file_list, filename,
             h1.hash   = hb
             h1.block  = local_block_list[hb]
             h1.status = "what"
-            print (h1)
+            #print (h1)
             print ("hi")
             try:
                 resp = sock.storeBlock(h1)
@@ -178,14 +179,16 @@ def upload_file(sock, meta_sock, local_block_list, local_file_list, filename,
             else:
                 print "Server said ERROR, block upload unsuccessful"
         meta_sock.storeFile(upload_file)
+        print("OK")
 
 
     elif upload_resp.status == uploadResponseType.FILE_ALREADY_PRESENT:
-        print("should just overwrite")
+        print("OK")
 
     else:
         #error
         print("error in uploading to metadata server")
+        print("ERROR")
 
 
 def download_file(sock, meta_sock, local_block_list, local_file_list, filename,
@@ -202,10 +205,12 @@ def download_file(sock, meta_sock, local_block_list, local_file_list, filename,
                     hb = sock.getBlock(hashString)
                 except Exception as e:
                     print "Received exception while trying getBlock"
+                    print "ERROR"
                     print e
                     exit(1)
                 if hb.status == "ERROR":
                     print "ERROR status while retrieving block, looks like block server does`nt have it"
+                    print "ERROR"
                     return
                 else:
                     print "Block status OK"
@@ -216,15 +221,12 @@ def download_file(sock, meta_sock, local_block_list, local_file_list, filename,
                     print "Blocks match"
                 else:
                     print "Blocks does not match"
-                    print (hashString)
-                    print (hashString_dwnld)
-                    print (hb.block)
-                    print (hb.hash)
                 write_file.write(hb.block)
 
             else:
                 write_file.write(local_block_list[hashString])
            # data = fread(4096)
+            print ("OK")
 
     else:
         print "Server said ERROR,  Meta server get list unsuccessful"
@@ -237,11 +239,13 @@ def delete_file(sock, meta_sock, local_block_list, local_file_list, filename):
     except Exception as e:
       print "ERROR while calling deleteFile"
       print e
+      print "ERROR"
     if resp.message == responseType.OK:
       print "Deletion of block successful"
+      print "OK"
     else:
       print "Deletion of block not successful"
-    print "done"   
+      print "ERROR"  
    # else:
        # print "Server said ERROR,  Meta server get list unsuccessful"
 
@@ -310,7 +314,7 @@ if __name__ == "__main__":
 
 
 
-    print "Starting client"
+    #print "Starting client"
 
     '''
     Server information can be parsed from the config file

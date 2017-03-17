@@ -14,8 +14,8 @@ if [ $BUILD_OR_CLEAN == "build" ]
 then
 	echo "Building"
 	# Enter your build code here, think about make
-	# thrift --gen py -r metadataServer.thrift
-	# thrift --gen py -r blockServer.thrift
+	thrift --gen py -r metadataServer.thrift
+	thrift --gen py -r blockServer.thrift
 
 	# Fill in the build part, see comments below
 
@@ -25,7 +25,7 @@ elif [ $BUILD_OR_CLEAN == "clean" ]
 then
 	echo "Cleaning"
 	# Do the cleaning part here, think of make clean
-	# rm -rf gen-py
+  rm -rf gen-py
 
 	# Fill in code specific cleanup similar to what you would do in make clean
 else
@@ -42,10 +42,10 @@ fi
 
 # Eg: for CPP
 #
-# SRC_DIR = src/
-# INC_DIR = inc/
+#SRC_DIR = src/
+#INC_DIR = inc/
 # etc.
-# g++ ...
+g++ ...
 # If you want, you may call a make file from here
 # make
 
