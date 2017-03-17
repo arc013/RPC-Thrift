@@ -230,6 +230,7 @@ def download_file(sock, meta_sock, local_block_list, local_file_list, filename,
 
     else:
         print "Server said ERROR,  Meta server get list unsuccessful"
+        print "ERROR"
 
 def delete_file(sock, meta_sock, local_block_list, local_file_list, filename):
     s = file()
