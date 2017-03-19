@@ -45,7 +45,7 @@ fi
 #SRC_DIR = src/
 #INC_DIR = inc/
 # etc.
-g++ ...
+#g++ ...
 # If you want, you may call a make file from here
 # make
 
